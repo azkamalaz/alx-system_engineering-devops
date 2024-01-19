@@ -1,6 +1,12 @@
-# Using Puppet, install flask from pip3
+# 1-install_a_package.pp
 
-package { 'flask':
+# Define the package resource for Flask
+package { 'Flask':
   ensure   => '2.1.0',
-  provider => 'pip',
+  provider => 'pip3',
+}
+
+# Notify the user when the package is installed
+notify { 'Flask installed successfully':
+  require => Package['Flask'],
 }
