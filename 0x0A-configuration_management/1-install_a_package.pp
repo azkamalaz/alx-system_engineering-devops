@@ -15,7 +15,7 @@ package { 'Flask':
 }
 
 package { 'Werkzeug':
-  ensure   => '2.1.0',
+  ensure   => '2.0.2',
   provider => 'pip3',
   require  => Class['python::pip'],
 }
