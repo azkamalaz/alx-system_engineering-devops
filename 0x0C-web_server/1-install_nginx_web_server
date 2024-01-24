@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
-# Installs nginx server
+# installing nginx, listening on port 80
+
 apt-get update
-apt-get -y install nginx
+apt-get install -y nginx
+
 ufw allow 'Nginx HTTP'
-echo "Hello World!" > /var/www/html/index.html
-service nginx start
+chmod -R 755 /var/www
+echo 'Hello World!' > /var/www/html/index.html
+if [ "$(pgrep -c nginx)" -le 0 ]; then
+	service nginx start
+else
+	service nginx restart
+fi
