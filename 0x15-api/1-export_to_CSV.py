@@ -1,22 +1,36 @@
 #!/usr/bin/python3
-"""
-Python script that uses the REST API and returns information about a given employee ID
-and returns TODO list progress
-"""
-
-import requests
+'''
+Module contains python script for making an api call and writing response to
+csv file
+'''
 import csv
-from sys import argv
+import requests
+import sys
+
 
 if __name__ == '__main__':
-    userId = argv[1]
-    user = requests.get("https://jsonplaceholder.typicode.com/users/{}".
-                        format(userId), verify=False).json()
-    todo = requests.get("https://jsonplaceholder.typicode.com/todos?userId={}".
-                        format(userId), verify=False).json()
-    with open("{}.csv".format(userId), 'w', newline='') as csvfile:
-        task_writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-        for task in todo:
-            task_writer.writerow([int(userId), user.get('username'),
-                                  task.get('completed'),
-                                  task.get('title')])
+
+    user_id = sys.argv[1]
+    url = 'https://jsonplaceholder.typicode.com/users/{}/'.format(user_id)
+    todos_url = url + 'todos'
+    user = requests.get(url).json()
+    todos = requests.get(todos_url).json()
+
+    dict_list = []
+    for todo in todos:
+        new_dict = {}
+        new_dict['userId'] = user.get('id')
+        new_dict['username'] = user.get('username')
+        new_dict['completed'] = todo.get('completed')
+        new_dict['title'] = todo.get('title')
+        dict_list.append(new_dict)
+
+    file_name = '{}.csv'.format(user.get('id'))
+
+    with open(file_name, mode='w') as csv_file:
+        fieldnames = ['userId', 'username', 'completed', 'title']
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames, quotechar='"',
+                                quoting=csv.QUOTE_ALL)
+
+        for dict in dict_list:
+            writer.writerow(dict)

@@ -1,29 +1,32 @@
 #!/usr/bin/python3
-"""
-Python script that uses the REST API and returns information about a given employee ID
-and returns TODO list progress
-"""
-
-import requests
+'''
+Module contains python script for making an api call and writing response to
+csv file
+'''
 import json
+import requests
+
 
 if __name__ == '__main__':
-    user = requests.get("https://jsonplaceholder.typicode.com/users/{}".
-                        verify=False).json()
-    user_dict = {}
-    username_dict = {}
+
+    users_url = 'https://jsonplaceholder.typicode.com/users'
+    todos_url = 'https://jsonplaceholder.typicode.com/todos'
+    users = requests.get(users_url).json()
+    todos = requests.get(todos_url).json()
+
+    todos_dict = {}
     for user in users:
-        uid = user.get("id")
-        user_dict[uid] = []
-        username_dict[uid] = usr.get("username")
-    todo = requests.get("https://jsonplaceholder.typicode.com/todos?userId={}".
-                        verify=False).json()
-    for task in todo:
-        task_dict = {}
-        uid = task.get("userId")
-        task_dict["task"] = task.get('title')
-        task_dict["completed"] = task.get('completed')
-        task_dict["username"] = username_dict.get(uid)
-        user_dict.get(uid).append(task_dict)
-    with open("todo_all_employees.json", 'w') as jsonfile:
-        json.dump(user_dict, jsonfile)
+        user_todo_list = []
+        for todo in todos:
+            if todo.get('userId') == user.get('id'):
+                new_dict = {}
+                new_dict['task'] = todo.get('title')
+                new_dict['completed'] = todo.get('completed')
+                new_dict['username'] = user.get('username')
+                user_todo_list.append(new_dict)
+        todos_dict[user.get('id')] = user_todo_list
+
+    file_name = 'todo_all_employees.json'
+
+    with open(file_name, mode='w') as outfile:
+        json.dump(todos_dict, outfile)
