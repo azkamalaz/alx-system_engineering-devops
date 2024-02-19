@@ -1,38 +1,29 @@
 #!/usr/bin/python3
 """
-Request from API; Return TODO list progress of all employees
-Export this data to JSON
+Python script that uses the REST API and returns information about a given employee ID
+and returns TODO list progress
 """
-import json
+
 import requests
+import json
 
-
-def all_to_json():
-    """return API data"""
-    USERS = []
-    userss = requests.get("http://jsonplaceholder.typicode.com/users")
-    for u in userss.json():
-        USERS.append((u.get('id'), u.get('username')))
-    TASK_STATUS_TITLE = []
-    todos = requests.get("http://jsonplaceholder.typicode.com/todos")
-    for t in todos.json():
-        TASK_STATUS_TITLE.append((t.get('userId'),
-                                  t.get('completed'),
-                                  t.get('title')))
-
-    """export to json"""
-    data = dict()
-    for u in USERS:
-        t = []
-        for task in TASK_STATUS_TITLE:
-            if task[0] == u[0]:
-                t.append({"task": task[2], "completed": task[1],
-                          "username": u[1]})
-        data[str(u[0])] = t
-    filename = "todo_all_employees.json"
-    with open(filename, "w") as f:
-        json.dump(data, f, sort_keys=True)
-
-
-if __name__ == "__main__":
-    all_to_json()
+if __name__ == '__main__':
+    user = requests.get("https://jsonplaceholder.typicode.com/users/{}".
+                        verify=False).json()
+    user_dict = {}
+    username_dict = {}
+    for user in users:
+        uid = user.get("id")
+        user_dict[uid] = []
+        username_dict[uid] = usr.get("username")
+    todo = requests.get("https://jsonplaceholder.typicode.com/todos?userId={}".
+                        verify=False).json()
+    for task in todo:
+        task_dict = {}
+        uid = task.get("userId")
+        task_dict["task"] = task.get('title')
+        task_dict["completed"] = task.get('completed')
+        task_dict["username"] = username_dict.get(uid)
+        user_dict.get(uid).append(task_dict)
+    with open("todo_all_employees.json", 'w') as jsonfile:
+        json.dump(user_dict, jsonfile)
