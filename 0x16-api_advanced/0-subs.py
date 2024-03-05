@@ -1,17 +1,19 @@
 #!/usr/bin/python3
-"""Module for task 0"""
+'''
+Module contains a function that makes an api call
+'''
+import requests
 
 
 def number_of_subscribers(subreddit):
-    """Queries the Reddit API and returns the number of subscribers
-    to the subreddit"""
-    import requests
-
-    sub_info = requests.get("https://www.reddit.com/r/{}/about.json"
-                            .format(subreddit),
-                            headers={"User-Agent": "My-User-Agent"},
-                            allow_redirects=False)
-    if sub_info.status_code >= 300:
+    '''
+    Makes an api call to get the number of subscribers in a given subreddit
+    Args:
+        subreddit(str) - The name of the subreddit to check the no of subs
+    '''
+    url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
+    data = requests.get(url, headers={'User-agent': 'my-bot'})
+    if data.status_code == 200:
+        return data.json().get('data').get('subscribers')
+    else:
         return 0
-
-    return sub_info.json().get("data").get("subscribers")
